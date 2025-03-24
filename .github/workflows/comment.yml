@@ -98,7 +98,7 @@ jobs:
           cat git_status.txt
       
       - name: commit git diff
-        if: github.event.action == 'synchronize'
+        if: github.event.action == 'synchronize' && steps.get-labels.outputs.deploy_all_changes != 'true'
         run: |
           git diff --name-status ${{ github.event.before }}..${{ github.event.after }}  > git_status.txt
           cat git_status.txt
