@@ -49,8 +49,7 @@ jobs:
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 body: `You performed the following action: "${{github.event.action}}" a pull request.\n\
-                Deploying to the following environments:\n\
-                - ${labels.join('\n- ')}`
+                Deploying to the following environments:\n- ${labels.join('\n- ')}`
               })
             })
       - name: Pull repo to runner
