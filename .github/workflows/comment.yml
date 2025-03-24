@@ -61,12 +61,24 @@ jobs:
               
               core.setOutput('labels', labels)
 
+              let body = ''
+
+              if ('${{github.event.action}}' == 'synchronize') {
+                body = 'You have committed to a pull request'
+
+                if (deploy_all) {
+                  body += ' and marked the action to deploy all changes'
+                }
+                body += '.\n'
+              } else {
+                body = 'You have ${{github.event.action}} a pull request.\n'
+              }
+              body += `Deploying to the following environments:\n- ${labels.join('\n- ')}`
               github.rest.issues.createComment({
                 issue_number: context.issue.number,
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                body: `You have ${{github.event.action}} a pull request.\n\
-                Deploying to the following environments:\n- ${labels.join('\n- ')}`
+                body: body
               })
             })
       - name: Pull repo to runner
