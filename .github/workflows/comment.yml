@@ -1,6 +1,9 @@
 on:
   pull_request:
-    types: [opened, reopened]
+    types: 
+      - opened
+      - reopened
+      - synchronize # a commit on the head branch of the PR
 
 jobs:
   comment:
