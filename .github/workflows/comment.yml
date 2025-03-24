@@ -91,7 +91,7 @@ jobs:
           git config core.quotepath off # Allows for æ,ø,å in filepaths
 
       - name: (re)opened git diff
-        if: github.event.action == 'reopened' || github.event.action == 'opened' || (github.event.action == 'synchronize' && steps.get-labels.outputs.deploy_all == 'True')
+        if: github.event.action == 'reopened' || github.event.action == 'opened' || (github.event.action == 'synchronize' && steps.get-labels.outputs.deploy_all == 'true')
         run: |
           git diff --name-status --merge-base origin/main > git_status.txt
           cat git_status.txt
