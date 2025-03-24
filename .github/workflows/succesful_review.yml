@@ -1,6 +1,6 @@
 on:
   pull_request_review:
-    types: [submitted]
+    # types: [submitted]
 
 env:
   SCRIPT_FOLDER: ${{ github.workspace }}/.github/scripts
