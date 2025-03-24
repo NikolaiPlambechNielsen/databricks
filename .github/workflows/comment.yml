@@ -29,8 +29,10 @@ jobs:
               owner: 'nikolaiplambechnielsen',
               repo: 'databricks'
             }).then(function(result) {
-              console.log(result)
-              return 'normalresult';
+              for (var label in result)
+              {
+                console.log(label.id);
+              };
             })
       - name: Welcome user
         uses: actions/github-script@v7
