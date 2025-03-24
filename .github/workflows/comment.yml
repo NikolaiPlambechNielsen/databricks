@@ -28,6 +28,9 @@ jobs:
             result.then(function(result) {
               /* Run over each label in the data array of the result */
               let labels = Array.from(result['data'], (label) => label['name'])
+
+              labels.forEach(label => {console.log(label)})
+
               github.rest.issues.createComment({
                 issue_number: context.issue.number,
                 owner: context.repo.owner,
