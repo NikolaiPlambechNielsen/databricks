@@ -24,7 +24,7 @@ jobs:
           script: |
             github.rest.issues.createComment({
               issue_number: 2,
-              owner: nikolaiplambechnielsen,
-              repo: databricks,
+              owner: 'nikolaiplambechnielsen',
+              repo: 'databricks',
               body: '👋 Thanks for reporting!'
             })
