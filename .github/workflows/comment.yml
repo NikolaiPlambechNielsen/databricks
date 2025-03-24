@@ -29,8 +29,8 @@ jobs:
             result.then(function(result) {
               /* Run over each label in the data array of the result */
               let labels = Array.from(result['data'], (label) => label['name'])
-              console.log(`pull_request_labels=[${labels}] >> $GITHUB_OUTPUT`)
-
+              //console.log(`pull_request_labels=[${labels}] >> $GITHUB_OUTPUT`)
+              core.setOutput('labels', labels)
               github.rest.issues.createComment({
                 issue_number: context.issue.number,
                 owner: context.repo.owner,
