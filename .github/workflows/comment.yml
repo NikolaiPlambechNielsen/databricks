@@ -64,7 +64,7 @@ jobs:
       - name: (re)opened git diff
         if: github.event.action == 'reopened' || github.event.action == 'opened'
         run: |
-          git diff --name-status --merge-base main  > git_status.txt
+          git diff --name-status --merge-base origin/main > git_status.txt
           cat git_status.txt
       
       - name: commit git diff
