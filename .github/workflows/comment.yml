@@ -31,7 +31,7 @@ jobs:
               let labels = Array.from(result['data'], (label) => label['name'])
               //console.log(`pull_request_labels=[${labels}] >> $GITHUB_OUTPUT`)
               let labels_as_json = `["${labels.join('","')}"]`
-              core.setOutput('labels', labels_as_json))
+              core.setOutput('labels', labels_as_json)
               github.rest.issues.createComment({
                 issue_number: context.issue.number,
                 owner: context.repo.owner,
