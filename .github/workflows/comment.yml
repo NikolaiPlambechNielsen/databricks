@@ -32,6 +32,8 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
+            const deploy_all_label = 'deploy_all_changes'
+          
             /* Grab labels on issue/pull request */
             const result = github.rest.issues.listLabelsOnIssue({
               issue_number: context.issue.number,
@@ -43,12 +45,27 @@ jobs:
             result.then(function(result) {
               /* Run over each label in the data array of the result */
               let labels = Array.from(result['data'], (label) => label['name'])
+
+              let deploy_all = labels.includes(deploy_all_label) 
+              if (deploy_all) {
+                core.setOutput(deploy_all_label, true)
+                labels = labels.filter((label) => label != deploy_all_label )
+
+                github.rest.issues.removeLabel({
+                  issue_number: context.issue.number,
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  label: deploy_all_label
+                })
+              }
+              
               core.setOutput('labels', labels)
+
               github.rest.issues.createComment({
                 issue_number: context.issue.number,
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                body: `You performed the following action: "${{github.event.action}}" a pull request.\n\
+                body: `You have ${{github.event.action}} a pull request.\n\
                 Deploying to the following environments:\n- ${labels.join('\n- ')}`
               })
             })
@@ -62,7 +79,7 @@ jobs:
           git config core.quotepath off # Allows for æ,ø,å in filepaths
 
       - name: (re)opened git diff
-        if: github.event.action == 'reopened' || github.event.action == 'opened'
+        if: github.event.action == 'reopened' || github.event.action == 'opened' || (github.event.action == 'synchronize' && steps.get-labels.outputs.deploy_all == 'True')
         run: |
           git diff --name-status --merge-base origin/main > git_status.txt
           cat git_status.txt
