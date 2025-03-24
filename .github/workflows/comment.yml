@@ -29,9 +29,9 @@ jobs:
               owner: 'nikolaiplambechnielsen',
               repo: 'databricks'
             }).then(function(result) {
-              for (var label in result)
+              for (var label in result.data)
               {
-                console.log(label);
+                console.log(label.name);
               };
             })
       - name: Welcome user
