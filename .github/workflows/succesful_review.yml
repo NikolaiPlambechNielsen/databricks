@@ -1,0 +1,71 @@
+on:
+  pull_request_review:
+    types: [submitted]
+
+env:
+  SCRIPT_FOLDER: ${{ github.workspace }}/.github/scripts
+  BUNDLE_TARGET: service_principal
+  METADATA_FOLDER: _metadata
+  BUNDLE_VALIDATION_FOLDER: validation_files
+  NIGHTLY_FOLDER: nightly
+  DEPENDENCIES_FOLDER: dependencies
+
+  
+  
+jobs:
+  approved:
+    if: github.event.review.state == 'approved'
+    permissions:
+      pull-requests: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+    runs-on: ubuntu-latest
+    outputs:
+      environments: ${{steps.get-labels.outputs.labels}}
+      table_bundles: ${{ steps.get_bundles.outputs.table_bundles }}
+      view_bundles: ${{ steps.get_bundles.outputs.view_bundles }}
+      deploy_all: ${{steps.get-labels.outputs.deploy_all_changes}}
+    steps:
+      - name: Get labels and post comment
+        id: get-labels
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `Review approved. Deploying to PROD.`
+            })
+      - name: Pull repo to runner
+        uses: actions/Checkout@v4
+        with:
+          fetch-depth: 0 #Fetch full history to allow for git diff before..after
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: git diff
+        run: |
+          git diff --name-status --merge-base origin/main > git_status.txt
+          cat git_status.txt
+          git config core.quotepath off # Allows for æ,ø,å in filepaths
+
+      # Note: first argument is name of input file, second is name of output file, third is the name of the environment folder
+      - name: Identify added and modified bundles
+        run: |
+          python ${{ env.SCRIPT_FOLDER }}/bundles_from_git_status.py git_status.txt ./ "deployment" --ignore_case
+
+      - name: Print bundles
+        run: | 
+          echo "Views:"
+          cat view_bundles.json
+          echo ""
+          echo "Tables:"
+          cat table_bundles.json
+
+      # Lastly we write the list of changed bundles into the output of this step, with the name "changed_bundles".
+      # Note, we must also specify an id to the step, to be able to use the output, just as before.
+      - name: Write list of changed bundles to output
+        id: get_bundles
+        run: |
+          echo "view_bundles=$(cat view_bundles.json)" >> "$GITHUB_OUTPUT"
+          echo "table_bundles=$(cat table_bundles.json)" >> "$GITHUB_OUTPUT"

@@ -16,7 +16,7 @@ env:
 
 
 jobs:
-  comment:
+  comment_and_deploy:
     permissions:
       pull-requests: write
     env:
