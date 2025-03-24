@@ -29,8 +29,7 @@ jobs:
             result.then(function(result) {
               /* Run over each label in the data array of the result */
               let labels = Array.from(result['data'], (label) => label['name'])
-
-              labels.forEach(label => {console.log(label)})
+              console.log(`pull_request_labels=[${labels}] >> $GITHUB_OUTPUT`)
 
               github.rest.issues.createComment({
                 issue_number: context.issue.number,
@@ -40,6 +39,7 @@ jobs:
               })
             })
       - name: use labels
-        run: echo "${{steps.get-labels.outputs.result}}"
-          
+        run: |
+          echo "${{steps.get-labels.outputs.result}}"
+          echo "${{steps.get-labels.outputs.labels}}"
 
