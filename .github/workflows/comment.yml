@@ -48,7 +48,9 @@ jobs:
                 issue_number: context.issue.number,
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                body: `Deploying to ${labels.join(' and ')}`
+                body: `You performed the following action: "${{github.event.action}}".\
+                Deploying to the following environments:\
+                ${labels.join('\n')}`
               })
             })
       - name: Pull repo to runner
@@ -57,9 +59,7 @@ jobs:
           fetch-depth: 0 #Fetch full history to allow for git diff before..after
           ref: ${{ github.event.pull_request.head.sha }}
   
-      - run: git branch -a
       - run: |
-          echo "${{github.event.action}}"
           git config core.quotepath off # Allows for æ,ø,å in filepaths
 
       - name: (re)opened git diff
