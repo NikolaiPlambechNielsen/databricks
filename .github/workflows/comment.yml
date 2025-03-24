@@ -25,19 +25,14 @@ jobs:
             })
             
             /* use "then" to grab response */
-            let labels = result.then(function(result) {
+            result.then(function(result) {
               /* Run over each label in the data array of the result */
-              let filledArray = Array.from(result['data'], (label) => label['name'])
-              return filledArray
+              let labels = Array.from(result['data'], (label) => label['name'])
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: `Deploying to ${labels.join(' and ')}`
+              })
             })
 
-            labels.forEach(function(entry){
-              console.log(entry)
-            })
-
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: `Deploying to ${labels.join(' and ')}`
-            })
