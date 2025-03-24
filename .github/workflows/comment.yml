@@ -31,7 +31,7 @@ jobs:
             }).then(function(result) {
               for (var label in result)
               {
-                console.log(var);
+                console.log(label);
               };
             })
       - name: Welcome user
