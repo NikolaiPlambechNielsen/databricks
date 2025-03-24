@@ -36,6 +36,10 @@ jobs:
               })
             })
 
+            labels.forEach(function(entry){
+              console.log(entry)
+            })
+
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
