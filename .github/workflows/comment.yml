@@ -4,23 +4,24 @@ on:
 
 jobs:
   comment:
+    env:
+      GH_TOKEN: ${{ github.token }}
     runs-on: ubuntu-latest
     steps:
-      # - name: Welcome user
-      #   uses: actions/github-script@v7
-      #   with:
-      #     github-token: ${{ secrets.GITHUB_TOKEN }}
-      #     script: |
-      #       github.rest.issues.createComment({
-      #         issue_number: context.issue.number,
-      #         owner: context.repo.owner,
-      #         repo: context.repo.repo,
-      #         body: '👋 Thanks for reporting!'
-      #       })
       - name: View context attributes
         uses: actions/github-script@v7
         with:
           script: console.log(context)
       - name: Get labels
         run: |
-          gh api --jq '.labels.[].name' /repos/{owner}/{repo}/pulls/${{ github.event.number }}
+          gh api --jq '.labels.[].name' /repos/nikolaiplambechnielsen/databricks/pulls/${{ github.event.number }}
+      - name: Welcome user
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '👋 Thanks for reporting!'
+            })
