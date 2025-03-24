@@ -55,9 +55,12 @@ jobs:
         uses: actions/Checkout@v4
         with:
           fetch-depth: 0 #Fetch full history to allow for git diff before..after
+          ref: ${{ github.event.pull_request.head.sha }}
   
-      - run: git config core.quotepath off # Allows for æ,ø,å in filepaths
-      
+      - run: |
+          git config core.quotepath off # Allows for æ,ø,å in filepaths
+          echo "${{github.event.action}}"
+
       - name: (re)opened git diff
         if: github.event.action == 'reopened' || github.event.action == 'opened'
         run: |
