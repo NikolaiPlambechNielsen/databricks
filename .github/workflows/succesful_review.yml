@@ -1,6 +1,6 @@
 on:
   pull_request_review:
-    # types: [submitted]
+    types: [submitted]
 
 env:
   SCRIPT_FOLDER: ${{ github.workspace }}/.github/scripts
@@ -14,7 +14,7 @@ env:
   
 jobs:
   approved:
-    if: github.event.review.state == 'approved'
+    # if: github.event.review.state == 'approved'
     permissions:
       pull-requests: write
     env:
