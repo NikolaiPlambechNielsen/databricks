@@ -59,6 +59,9 @@ jobs:
       - run: git config core.quotepath off # Allows for æ,ø,å in filepaths
       
       - run: |
+          echo "${{toJson(github.event)}}"
+      - run: |
+          echo "${{github.event.action}}"
           echo "${{ toJson(github) }}"
       # Note: first argument is name of input file, second is name of output file, third is the name of the environment folder
       - name: Identify added and modified bundles
