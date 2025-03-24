@@ -29,7 +29,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
             }).then(function(result) {
-              result.forEach(function(label) {
+              result['data'].forEach(function(label) {
                 console.log(label['name'])
               })
 
