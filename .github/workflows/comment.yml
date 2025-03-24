@@ -57,9 +57,10 @@ jobs:
           fetch-depth: 0 #Fetch full history to allow for git diff before..after
           ref: ${{ github.event.pull_request.head.sha }}
   
+      - run: git branch -a
       - run: |
-          git config core.quotepath off # Allows for æ,ø,å in filepaths
           echo "${{github.event.action}}"
+          git config core.quotepath off # Allows for æ,ø,å in filepaths
 
       - name: (re)opened git diff
         if: github.event.action == 'reopened' || github.event.action == 'opened'
