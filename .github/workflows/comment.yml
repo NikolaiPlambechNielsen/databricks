@@ -15,3 +15,5 @@ jobs:
               repo: context.repo.repo,
               body: '👋 Thanks for reporting!'
             })
+      - run: |
+          gh api --jq '.labels.[].name' /repos/{owner}/{repo}/pulls/${{ github.event.number }}
