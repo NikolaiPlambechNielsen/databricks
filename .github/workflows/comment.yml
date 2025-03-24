@@ -58,16 +58,21 @@ jobs:
   
       - run: git config core.quotepath off # Allows for æ,ø,å in filepaths
       
-      - run: |
-          echo "${{toJson(github.event)}}"
-      - run: |
-          echo "${{github.event.action}}"
-          echo "${{ toJson(github) }}"
+      - name: (re)opened git diff
+        if: github.event.action == 'reopened' || github.event.action == 'opened'
+        run: |
+          git diff --name-status --merge-base main  > git_status.txt
+          cat git_status.txt
+      
+      - name: commit git diff
+        if: github.event.action == 'synchronize'
+        run: |
+          git diff --name-status ${{ github.event.before }}..${{ github.event.after }}  > git_status.txt
+          cat git_status.txt
+
       # Note: first argument is name of input file, second is name of output file, third is the name of the environment folder
       - name: Identify added and modified bundles
         run: |
-          git diff --name-status ${{ github.event.before }}..${{ github.event.after }} > git_status.txt
-          cat git_status.txt
           python ${{ env.SCRIPT_FOLDER }}/bundles_from_git_status.py git_status.txt ./ "deployment" --ignore_case
 
       - name: Print bundles
