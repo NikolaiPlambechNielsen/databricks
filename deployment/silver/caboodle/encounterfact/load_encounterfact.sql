@@ -1,0 +1,1 @@
+select * from dap_x_bronze.caboodle.reportingx___encounterfact
