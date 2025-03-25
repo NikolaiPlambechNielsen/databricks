@@ -1,6 +1,0 @@
-on:
-  push:
-  
-jobs:
-  run_action:
-    uses: ./.github/workflows/test_action.yml
