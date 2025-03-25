@@ -42,11 +42,12 @@ jobs:
               repo: context.repo.repo,
             })
             
-            /* use "then" to grab response */
             result.then(function(result) {
-              /* Run over each label in the data array of the result */
+              
+              /* Grab label names from result */
               let labels = Array.from(result['data'], (label) => label['name'])
 
+              /* Check if deploy_all label is set. Remove label if it is. */
               let deploy_all = labels.includes(deploy_all_label) 
               if (deploy_all) {
                 core.setOutput(deploy_all_label, true)
@@ -60,10 +61,11 @@ jobs:
                 })
               }
               
+              /* Set GitHub outputs */
               core.setOutput('labels', labels)
 
+              /* Prepare comment body */
               let body = ''
-
               if ('${{github.event.action}}' == 'synchronize') {
                 body = 'You have committed to a pull request'
 
@@ -75,6 +77,8 @@ jobs:
                 body = 'You have ${{github.event.action}} a pull request.\n'
               }
               body += `Deploying to the following environments:\n- ${labels.join('\n- ')}`
+
+              /* post comment body */
               github.rest.issues.createComment({
                 issue_number: context.issue.number,
                 owner: context.repo.owner,
