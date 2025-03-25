@@ -127,7 +127,10 @@ jobs:
   deploy_all_tables:
     needs: comment_and_deploy
     uses: ./.github/workflows/deploy_tables.yml
+    strategy:
+      matrix:
+        table_path: ${{fromJson(needs.comment_and_deploy.outputs.table_bundles)}}
+        environment: ${{fromJson(needs.comment_and_deploy.outputs.environments)}}
     with:
-      table_path: 'silver/caboodle/patientdim'
-      environment: DEV
-
+      table_path: ${{matrix.table_path}}
+      environment: ${{matrix.environment}}
