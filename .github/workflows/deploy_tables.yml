@@ -1,0 +1,112 @@
+# Current problems:
+# - the nightly job will not update on commit of the metadata json file.
+# - no verification of dependencies
+# - Split jobs into different workflows to increase reuse
+
+name: Deploy tables
+
+# The action runs on any push to the main branch, where there is at least one change in the folder
+# "DevDeployment" or one of its subfolders, except for the subfolders "_bundle_validation_files" and
+# "_nightly_specification". These two folders are excluded since they are (mostly, with the exception
+# of the nightly_metadata.json file) managed by GitHub actions.
+# To specify excluded paths you just put an exclamation point in front of the path (as in a .gitignore file).
+on:
+  workflow_call:
+    inputs:
+      table_path:
+        required: true
+        type: string
+      environment:
+        required: true
+        type: string
+
+
+# The "env" map specifies variables, which can be accessed as environment variables.
+env:
+  SCRIPT_FOLDER: ${{ github.workspace }}/.github/scripts
+  BUNDLE_TARGET: service_principal
+  METADATA_FOLDER: _metadata
+  BUNDLE_VALIDATION_FOLDER: validation_files
+  NIGHTLY_FOLDER: nightly
+  DEPENDENCIES_FOLDER: dependencies
+
+
+  SHARED_METADATA_FOLDER: ${{ github.workspace }}/SharedMetadata
+  DATA_DOMAIN_FOLDER: ${{ github.workspace }}/SharedMetadata/data_domains
+  DATA_DOMAIN_TABLE_MAPPING_FILE: data_domain_table_mapping.csv
+  DATA_DOMAIN_GROUP_MAPPING_FILE: data_domain_group_mapping.csv
+
+
+  DEV_DATABRICKS_HOST: "https://adb-6501772386877222.2.azuredatabricks.net/?o=6501772386877222"
+  DEV_ARM_CLIENT_ID: 4e99f261-85b9-4361-861c-22869a9bb183
+  DEV_ARM_TENANT_ID: 421c9c18-32c7-4250-84e0-c1626f963b1f
+  DEV_ENVIRONMENT_FOLDER: DevDeployment
+  DEV_CATALOG_LETTER: d
+  
+  TEST_DATABRICKS_HOST: "https://adb-3428170089966232.12.azuredatabricks.net/?o=3428170089966232"
+  TEST_ARM_CLIENT_ID: e82d6bae-4a77-4747-b173-e054e32292cc
+  TEST_ARM_TENANT_ID: 421c9c18-32c7-4250-84e0-c1626f963b1f
+  TEST_ENVIRONMENT_FOLDER: TestDeployment
+  TEST_CATALOG_LETTER: t
+
+  PROD_DATABRICKS_HOST: "https://adb-2776823572857644.4.azuredatabricks.net/?o=2776823572857644"
+  PROD_ARM_CLIENT_ID: 1d8fc106-2d54-4cdf-bf69-3e621713080b
+  PROD_ARM_TENANT_ID: 421c9c18-32c7-4250-84e0-c1626f963b1f
+  PROD_ENVIRONMENT_FOLDER: ProdDeployment
+  PROD_CATALOG_LETTER: p
+
+  DATABRICKS_HOST: "https://adb-6501772386877222.2.azuredatabricks.net/?o=6501772386877222"
+  ARM_CLIENT_ID: 4e99f261-85b9-4361-861c-22869a9bb183
+  ARM_TENANT_ID: 421c9c18-32c7-4250-84e0-c1626f963b1f
+  ENVIRONMENT_FOLDER: DevDeployment
+  WAREHOUSE_ID: dcd2b2c3b23acd09
+  CATALOG_PREFIX: dap_d_
+  CLUSTER_ID: 0312-220046-h7dfe3qd
+
+
+jobs:
+  deploy_tables:
+    # we only run this job, if the "changed_views_bundles" variable from before is both not an empty string or an empty json array.
+    runs-on: ubuntu-latest
+
+    # The "defaults" section specifies properties that should hold for each step in the job.
+    # In this case we specify the current working directory for each step. Note this path
+    # is relative to the default working directory, which is stored in the "github.workspace"
+    # context. See https://docs.github.com/en/actions/learn-github-actions/contexts#github-context
+    defaults:
+      run:
+        working-directory: ${{ env.ENVIRONMENT_FOLDER }}/${{ inputs.table_path }}
+
+    steps:
+      - uses: actions/Checkout@v4
+
+      - name: debug info
+        run: |
+          echo "Environment: ${{inputs.environment}}"
+          echo "Databricks host: ${{ env[format('{0}_DATABRICKS_HOST', inputs.environment)] }}" 
+          echo "ARM Client ID: ${{ env[format('{0}_CLIENT_ID', inputs.environment)] }}"
+          echo "ARM Tenant ID: ${{ env[format('{0}_TENANT_ID', inputs.environment)] }}" 
+          echo "Environment folder: ${{ env[format('{0}_ENVIRONMENT_FOLDER', inputs.environment)] }}" 
+          echo "Catalog letter: ${{ env[format('{0}_CATALOG_LETTER', inputs.environment)] }}" 
+          echo "Table path: ${{inputs.table_path}}"
+          echo "Environment: ${{inputs.environment}}"
+             
+
+      - name: "Create variables: values used in Databricks Asset Bundle"
+        id: variables
+        run: |
+          echo "table=$(pwd | rev | cut -d/ -f1 | rev)" >> $GITHUB_OUTPUT
+          echo "schema=$(pwd | rev | cut -d/ -f2 | rev)" >> $GITHUB_OUTPUT
+          echo "catalog=$(pwd | rev | cut -d/ -f3 | rev)" >> $GITHUB_OUTPUT
+          echo "define_file=$(ls | grep ^define_.*)" >> $GITHUB_OUTPUT
+          echo "load_package_file=$(ls | grep ^load_.*)" >> $GITHUB_OUTPUT
+          echo "package_name=$(ls | grep ^load_.* | cut -d. -f1 | cut -d_ -f2-)" >> $GITHUB_OUTPUT
+
+      - name: "Create variables: Debug"
+        run: |
+          echo "catalog: ${{steps.variables.outputs.catalog}}"
+          echo "schema: ${{steps.variables.outputs.schema}}"
+          echo "table: ${{steps.variables.outputs.table}}"
+          echo "define_file: ${{steps.variables.outputs.define_file}}"
+          echo "load_package_file: ${{steps.variables.outputs.load_package_file}}"
+          echo "load_package_file: ${{steps.variables.outputs.package_name}}"
