@@ -123,11 +123,11 @@ jobs:
         run: |
           echo "view_bundles=$(cat view_bundles.json)" >> "$GITHUB_OUTPUT"
           echo "table_bundles=$(cat table_bundles.json)" >> "$GITHUB_OUTPUT"
-  
-  # deploy_all_tables:
-  #   needs: comment_and_deploy
-  #   uses: ./.github/workflows/deploy_tables.yml
-  #     with:
-  #       table_path: 'silver/caboodle/patientdim'
-  #       environment: DEV
+
+  deploy_all_tables:
+    needs: comment_and_deploy
+    uses: ./.github/workflows/deploy_tables.yml
+    with:
+      table_path: 'silver/caboodle/patientdim'
+      environment: DEV
 
