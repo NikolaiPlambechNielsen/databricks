@@ -58,7 +58,7 @@ env:
   DATABRICKS_HOST: "https://adb-6501772386877222.2.azuredatabricks.net/?o=6501772386877222"
   ARM_CLIENT_ID: 4e99f261-85b9-4361-861c-22869a9bb183
   ARM_TENANT_ID: 421c9c18-32c7-4250-84e0-c1626f963b1f
-  ENVIRONMENT_FOLDER: DevDeployment
+  ENVIRONMENT_FOLDER: deployment
   WAREHOUSE_ID: dcd2b2c3b23acd09
   CATALOG_PREFIX: dap_d_
   CLUSTER_ID: 0312-220046-h7dfe3qd
@@ -84,8 +84,8 @@ jobs:
         run: |
           echo "Environment: ${{inputs.environment}}"
           echo "Databricks host: ${{ env[format('{0}_DATABRICKS_HOST', inputs.environment)] }}" 
-          echo "ARM Client ID: ${{ env[format('{0}_CLIENT_ID', inputs.environment)] }}"
-          echo "ARM Tenant ID: ${{ env[format('{0}_TENANT_ID', inputs.environment)] }}" 
+          echo "ARM Client ID: ${{ env[format('{0}_ARM_CLIENT_ID', inputs.environment)] }}"
+          echo "ARM Tenant ID: ${{ env[format('{0}_ARM_TENANT_ID', inputs.environment)] }}" 
           echo "Environment folder: ${{ env[format('{0}_ENVIRONMENT_FOLDER', inputs.environment)] }}" 
           echo "Catalog letter: ${{ env[format('{0}_CATALOG_LETTER', inputs.environment)] }}" 
           echo "Table path: ${{inputs.table_path}}"
