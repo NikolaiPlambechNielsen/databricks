@@ -127,7 +127,7 @@ jobs:
   deploy_all_tables:
     needs: comment_and_deploy
     uses: ./.github/workflows/deploy_tables.yml
-      with:
-        table_path: 'silver/caboodle/patientdim'
-        environment: DEV
+    with:
+      table_path: 'silver/caboodle/patientdim'
+      environment: DEV
 
