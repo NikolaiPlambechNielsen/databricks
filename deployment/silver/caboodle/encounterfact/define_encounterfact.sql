@@ -4,5 +4,6 @@ CREATE TABLE IF NOT EXISTS dap_x_silver.caboodle.encounterfact (
     departmentkey bigint,
     visitkey bigint,
     stringcolumn string,
-    morecolumns string
+    morecolumn string,
+    evenmore string
 )
