@@ -1,0 +1,16 @@
+name: deploy to dev
+
+on:
+  push:
+    branches:
+      - "!main"
+      - "**"
+
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: deploy to dev
+        run: echo "deploy to dev"
+    

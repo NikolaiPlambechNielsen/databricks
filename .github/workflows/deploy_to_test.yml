@@ -1,0 +1,33 @@
+name: deploy to test
+
+on:
+  pull_request:
+    types:
+      - opened
+      - ready_for_review
+
+
+
+jobs:
+  deploy:
+    permissions:
+      pull-requests: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: deploy to test
+        run: echo "deploy to test"
+    
+      - name: Post comment
+        id: get-labels
+        uses: actions/github-script@v7
+        with:
+          script: |
+            /* post comment body */
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: "Deploying to test."
+            })

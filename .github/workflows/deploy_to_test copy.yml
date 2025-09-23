@@ -1,0 +1,30 @@
+name: post comment on deploy to dev
+
+on:
+  pull_request:
+    types:
+      - synchronize
+
+
+
+jobs:
+  deploy:
+    permissions:
+      pull-requests: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+    runs-on: ubuntu-latest
+    steps:
+    
+      - name: Post comment
+        id: get-labels
+        uses: actions/github-script@v7
+        with:
+          script: |
+            /* post comment body */
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: "Deploying to dev."
+            })

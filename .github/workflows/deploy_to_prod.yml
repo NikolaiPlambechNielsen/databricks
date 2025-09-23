@@ -1,0 +1,15 @@
+name: deploy to prod
+
+on:
+  push:
+    branches:
+      - "main"
+
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: deploy to prod
+        run: echo "deploy to prod"
+    
