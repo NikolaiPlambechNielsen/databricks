@@ -3,6 +3,5 @@ CREATE TABLE IF NOT EXISTS dap_x_silver.caboodle.encounterfact (
     patientdurablekey bigint,
     departmentkey bigint,
     visitkey bigint,
-    stringcolumn string,
-    morecolumns string
+    stringcolumn string
 )
